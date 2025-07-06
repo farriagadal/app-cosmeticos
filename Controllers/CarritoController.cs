@@ -49,6 +49,15 @@ namespace CosmeticosApp.Controllers
             return View(productosCarrito);
         }
 
+        // GET: Carrito/GetCount - Para el contador AJAX
+        [HttpGet]
+        public IActionResult GetCount()
+        {
+            var carrito = ObtenerCarrito();
+            var totalItems = carrito.Sum(c => c.Cantidad);
+            return Json(totalItems);
+        }
+
         // POST: Carrito/Agregar
         [HttpPost]
         public async Task<IActionResult> Agregar(int productoId, int cantidad = 1)
