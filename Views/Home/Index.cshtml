@@ -1,0 +1,199 @@
+@model IEnumerable<CosmeticosApp.Models.Producto>
+
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Realza tu belleza natural</h1>
+                <p class="lead mb-4">Descubre nuestra colección de cosméticos premium. Productos de alta calidad para que te veas y te sientas increíble.</p>
+                <a asp-controller="Productos" asp-action="Index" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-shopping-bag me-2"></i>Ver Productos
+                </a>
+                <a asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Conoce más
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <img src="~/images/hero-cosmetics.jpg" alt="Cosméticos" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorías destacadas -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Nuestras Categorías</h2>
+            <p class="lead text-muted">Explora nuestra amplia gama de productos</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm category-card">
+                    <div class="card-body text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-palette fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Maquillaje</h5>
+                        <p class="card-text">Bases, labiales, máscaras y más para crear looks únicos</p>
+                        <a asp-controller="Productos" asp-action="Categoria" asp-route-id="1" class="btn btn-outline-primary">Ver Productos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm category-card">
+                    <div class="card-body text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-spa fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Cuidado Facial</h5>
+                        <p class="card-text">Cremas, serums y tratamientos para el cuidado de tu piel</p>
+                        <a asp-controller="Productos" asp-action="Categoria" asp-route-id="2" class="btn btn-outline-success">Ver Productos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm category-card">
+                    <div class="card-body text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-spray-can fa-3x text-info"></i>
+                        </div>
+                        <h5 class="card-title">Perfumería</h5>
+                        <p class="card-text">Fragancias exclusivas para cada ocasión</p>
+                        <a asp-controller="Productos" asp-action="Categoria" asp-route-id="4" class="btn btn-outline-info">Ver Productos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Productos destacados -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Productos Destacados</h2>
+            <p class="lead text-muted">Los favoritos de nuestros clientes</p>
+        </div>
+        <div class="row g-4">
+            @foreach (var producto in Model)
+            {
+                <div class="col-lg-3 col-md-6">
+                    <div class="card h-100 shadow-sm product-card">
+                        <div class="product-image-container">
+                            <img src="@(producto.ImagenUrl ?? "/images/default-product.jpg")" 
+                                 class="card-img-top" alt="@producto.Nombre">
+                            <div class="product-overlay">
+                                <button class="btn btn-primary btn-add-to-cart" 
+                                        data-product-id="@producto.Id"
+                                        data-product-name="@producto.Nombre">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <small class="text-muted">@producto.Marca.Nombre</small>
+                            </div>
+                            <h6 class="card-title">@producto.Nombre</h6>
+                            <p class="card-text small text-muted flex-grow-1">@producto.Descripcion</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0 text-primary">$@producto.Precio.ToString("N2")</span>
+                                <a asp-controller="Productos" asp-action="Details" asp-route-id="@producto.Id" 
+                                   class="btn btn-outline-primary btn-sm">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center mt-5">
+            <a asp-controller="Productos" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="fas fa-eye me-2"></i>Ver Todos los Productos
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Beneficios -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <div class="benefit-item">
+                    <i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
+                    <h5>Envío Gratis</h5>
+                    <p class="text-muted">En compras superiores a $50</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="benefit-item">
+                    <i class="fas fa-award fa-3x text-success mb-3"></i>
+                    <h5>Calidad Premium</h5>
+                    <p class="text-muted">Productos de las mejores marcas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="benefit-item">
+                    <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                    <h5>Soporte 24/7</h5>
+                    <p class="text-muted">Atención al cliente siempre disponible</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="benefit-item">
+                    <i class="fas fa-undo fa-3x text-warning mb-3"></i>
+                    <h5>Devoluciones</h5>
+                    <p class="text-muted">30 días para devolver tu compra</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Agregar al carrito
+            $('.btn-add-to-cart').click(function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+                
+                $.post('/Carrito/Agregar', { productoId: productId, cantidad: 1 })
+                    .done(function(response) {
+                        if (response.success) {
+                            $('#cart-count').text(response.cantidadTotal);
+                            
+                            // Mostrar mensaje de éxito
+                            var toast = `
+                                <div class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" 
+                                     role="alert" style="z-index: 1056;">
+                                    <div class="d-flex">
+                                        <div class="toast-body">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            ${productName} agregado al carrito
+                                        </div>
+                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                                                data-bs-dismiss="toast"></button>
+                                    </div>
+                                </div>
+                            `;
+                            $('body').append(toast);
+                            var toastElement = new bootstrap.Toast($('.toast').last());
+                            toastElement.show();
+                            
+                            setTimeout(function() {
+                                $('.toast').last().remove();
+                            }, 3000);
+                        }
+                    });
+            });
+        });
+    </script>
+} 

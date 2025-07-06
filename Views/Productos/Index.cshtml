@@ -1,0 +1,205 @@
+@model IEnumerable<CosmeticosApp.Models.Producto>
+
+@{
+    ViewData["Title"] = "Catálogo de Productos";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filtros -->
+        <div class="col-lg-3 col-md-4">
+            <div class="filter-sidebar">
+                <h4><i class="fas fa-filter me-2"></i>Filtros</h4>
+                <form asp-action="Index" method="get">
+                    
+                    <!-- Búsqueda -->
+                    <div class="filter-group">
+                        <label for="buscar">Buscar:</label>
+                        <input type="text" class="form-control" id="buscar" name="buscar" 
+                               value="@ViewBag.Buscar" placeholder="Nombre del producto...">
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="filter-group">
+                        <label for="categoriaId">Categoría:</label>
+                        <select class="form-select" id="categoriaId" name="categoriaId">
+                            <option value="">Todas las categorías</option>
+                            @foreach (var categoria in ViewBag.Categorias as List<CosmeticosApp.Models.Categoria>)
+                            {
+                                <option value="@categoria.Id" selected="@(ViewBag.CategoriaId == categoria.Id)">
+                                    @categoria.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Marca -->
+                    <div class="filter-group">
+                        <label for="marcaId">Marca:</label>
+                        <select class="form-select" id="marcaId" name="marcaId">
+                            <option value="">Todas las marcas</option>
+                            @foreach (var marca in ViewBag.Marcas as List<CosmeticosApp.Models.Marca>)
+                            {
+                                <option value="@marca.Id" selected="@(ViewBag.MarcaId == marca.Id)">
+                                    @marca.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="filter-group">
+                        <label>Rango de Precio:</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="number" class="form-control" name="precioMin" 
+                                       value="@ViewBag.PrecioMin" placeholder="Min" step="0.01">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" class="form-control" name="precioMax" 
+                                       value="@ViewBag.PrecioMax" placeholder="Max" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-times me-2"></i>Limpiar
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-shopping-bag me-2"></i>Catálogo de Productos</h1>
+                <div class="text-muted">
+                    @Model.Count() productos encontrados
+                </div>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var producto in Model)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow-sm product-card">
+                                <div class="product-image-container">
+                                    <img src="@(producto.ImagenUrl ?? "/images/default-product.jpg")" 
+                                         class="card-img-top" alt="@producto.Nombre">
+                                    <div class="product-overlay">
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary btn-add-to-cart" 
+                                                    data-product-id="@producto.Id"
+                                                    data-product-name="@producto.Nombre">
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </button>
+                                            <a asp-action="Details" asp-route-id="@producto.Id" 
+                                               class="btn btn-secondary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">@producto.Categoria.Nombre</span>
+                                        <span class="badge bg-secondary">@producto.Marca.Nombre</span>
+                                    </div>
+                                    <h6 class="card-title">@producto.Nombre</h6>
+                                    <p class="card-text small text-muted flex-grow-1">
+                                        @(producto.Descripcion.Length > 100 ? 
+                                          producto.Descripcion.Substring(0, 100) + "..." : 
+                                          producto.Descripcion)
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="h5 mb-0 text-primary">$@producto.Precio.ToString("N2")</span>
+                                            <small class="text-muted">Stock: @producto.Stock</small>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-primary btn-add-to-cart-simple" 
+                                                    data-product-id="@producto.Id"
+                                                    data-product-name="@producto.Nombre">
+                                                <i class="fas fa-cart-plus me-2"></i>Agregar al carrito
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h3>No se encontraron productos</h3>
+                    <p class="text-muted">Intenta ajustar los filtros o realizar una búsqueda diferente.</p>
+                    <a asp-action="Index" class="btn btn-primary">Ver todos los productos</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Agregar al carrito
+            $('.btn-add-to-cart, .btn-add-to-cart-simple').click(function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+                var $button = $(this);
+                
+                // Mostrar loading
+                var originalText = $button.html();
+                $button.html('<span class="loading-spinner me-2"></span>Agregando...');
+                $button.prop('disabled', true);
+                
+                $.post('/Carrito/Agregar', { productoId: productId, cantidad: 1 })
+                    .done(function(response) {
+                        if (response.success) {
+                            $('#cart-count').text(response.cantidadTotal);
+                            
+                            // Mostrar toast
+                            var toast = `
+                                <div class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" 
+                                     role="alert" style="z-index: 1056;">
+                                    <div class="d-flex">
+                                        <div class="toast-body">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            ${productName} agregado al carrito
+                                        </div>
+                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                                                data-bs-dismiss="toast"></button>
+                                    </div>
+                                </div>
+                            `;
+                            $('body').append(toast);
+                            var toastElement = new bootstrap.Toast($('.toast').last());
+                            toastElement.show();
+                            
+                            setTimeout(function() {
+                                $('.toast').last().remove();
+                            }, 3000);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error al agregar el producto al carrito');
+                    })
+                    .always(function() {
+                        // Restaurar botón
+                        $button.html(originalText);
+                        $button.prop('disabled', false);
+                    });
+            });
+        });
+    </script>
+} 
