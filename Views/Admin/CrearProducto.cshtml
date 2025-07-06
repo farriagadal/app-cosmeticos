@@ -1,0 +1,282 @@
+@model CosmeticosApp.Models.Producto
+
+@{
+    ViewData["Title"] = "Crear Producto";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="admin-sidebar">
+                <h4><i class="fas fa-cogs me-2"></i>Panel Admin</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-action="Productos">
+                            <i class="fas fa-boxes me-2"></i>Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Categorias">
+                            <i class="fas fa-tags me-2"></i>Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Marcas">
+                            <i class="fas fa-trademark me-2"></i>Marcas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Pedidos">
+                            <i class="fas fa-shopping-cart me-2"></i>Pedidos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-plus me-2"></i>Crear Producto</h1>
+                <a asp-action="Productos" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Productos
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-box me-2"></i>Información del Producto</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CrearProducto" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Información básica -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Nombre" class="form-label">Nombre del Producto *</label>
+                                        <input asp-for="Nombre" class="form-control" placeholder="Ej: Base Líquida Natural">
+                                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Codigo" class="form-label">Código del Producto</label>
+                                        <input asp-for="Codigo" class="form-control" placeholder="Ej: BL001">
+                                        <span asp-validation-for="Codigo" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Descripcion" class="form-label">Descripción *</label>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="4" 
+                                              placeholder="Descripción detallada del producto..."></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="CategoriaId" class="form-label">Categoría *</label>
+                                        <select asp-for="CategoriaId" class="form-select">
+                                            <option value="">Selecciona una categoría</option>
+                                            @foreach (var categoria in ViewBag.Categorias as List<CosmeticosApp.Models.Categoria>)
+                                            {
+                                                <option value="@categoria.Id">@categoria.Nombre</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="MarcaId" class="form-label">Marca *</label>
+                                        <select asp-for="MarcaId" class="form-select">
+                                            <option value="">Selecciona una marca</option>
+                                            @foreach (var marca in ViewBag.Marcas as List<CosmeticosApp.Models.Marca>)
+                                            {
+                                                <option value="@marca.Id">@marca.Nombre</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="MarcaId" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Precio" class="form-label">Precio *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input asp-for="Precio" class="form-control" type="number" step="0.01" min="0" placeholder="0.00">
+                                        </div>
+                                        <span asp-validation-for="Precio" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Stock" class="form-label">Stock Inicial *</label>
+                                        <input asp-for="Stock" class="form-control" type="number" min="0" placeholder="0">
+                                        <span asp-validation-for="Stock" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ImagenUrl" class="form-label">URL de Imagen</label>
+                                    <input asp-for="ImagenUrl" class="form-control" type="url" 
+                                           placeholder="https://ejemplo.com/imagen.jpg">
+                                    <div class="form-text">
+                                        Opcional. URL de una imagen para mostrar el producto.
+                                    </div>
+                                    <span asp-validation-for="ImagenUrl" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="Activo" class="form-check-input" type="checkbox" checked>
+                                    <label asp-for="Activo" class="form-check-label">
+                                        Producto activo (visible en la tienda)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Preview de imagen -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-image me-2"></i>Vista Previa</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <img id="imagePreview" 
+                                             src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop" 
+                                             alt="Vista previa" 
+                                             class="img-fluid rounded" 
+                                             style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Vista previa de la imagen
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sugerencias de imágenes -->
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-lightbulb me-2"></i>Sugerencias</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <small class="text-muted">
+                                            <strong>URLs de ejemplo:</strong><br>
+                                            • Base: https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop<br>
+                                            • Máscara: https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300&h=300&fit=crop<br>
+                                            • Crema: https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?w=300&h=300&fit=crop
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <a asp-action="Productos" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Crear Producto
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-sidebar .nav-link {
+            color: #6c757d;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-label {
+            font-weight: 500;
+        }
+        
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Preview de imagen
+        document.getElementById('ImagenUrl').addEventListener('input', function() {
+            const imageUrl = this.value;
+            const preview = document.getElementById('imagePreview');
+            
+            if (imageUrl) {
+                preview.src = imageUrl;
+                preview.onerror = function() {
+                    this.src = 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop';
+                }
+            } else {
+                preview.src = 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop';
+            }
+        });
+
+        // Validación del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const nombre = document.getElementById('Nombre').value;
+            const precio = document.getElementById('Precio').value;
+            const stock = document.getElementById('Stock').value;
+            const categoria = document.getElementById('CategoriaId').value;
+            const marca = document.getElementById('MarcaId').value;
+            
+            if (!nombre || !precio || !stock || !categoria || !marca) {
+                e.preventDefault();
+                alert('Por favor, complete todos los campos obligatorios (*)');
+                return false;
+            }
+            
+            if (parseFloat(precio) <= 0) {
+                e.preventDefault();
+                alert('El precio debe ser mayor a 0');
+                return false;
+            }
+            
+            if (parseInt(stock) < 0) {
+                e.preventDefault();
+                alert('El stock no puede ser negativo');
+                return false;
+            }
+        });
+    </script>
+} 

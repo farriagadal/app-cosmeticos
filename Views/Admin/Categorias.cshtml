@@ -1,0 +1,156 @@
+@model IEnumerable<CosmeticosApp.Models.Categoria>
+
+@{
+    ViewData["Title"] = "Gestión de Categorías";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="admin-sidebar">
+                <h4><i class="fas fa-cogs me-2"></i>Panel Admin</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Productos">
+                            <i class="fas fa-boxes me-2"></i>Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-action="Categorias">
+                            <i class="fas fa-tags me-2"></i>Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Marcas">
+                            <i class="fas fa-trademark me-2"></i>Marcas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Pedidos">
+                            <i class="fas fa-shopping-cart me-2"></i>Pedidos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-tags me-2"></i>Gestión de Categorías</h1>
+                <a asp-action="CrearCategoria" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Categoría
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list me-2"></i>Lista de Categorías (@Model.Count())</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Productos</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var categoria in Model)
+                                    {
+                                        <tr>
+                                            <td>@categoria.Id</td>
+                                            <td><strong>@categoria.Nombre</strong></td>
+                                            <td>@categoria.Descripcion</td>
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    @categoria.Productos.Count()
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(categoria.Activa ? "bg-success" : "bg-secondary")">
+                                                    @(categoria.Activa ? "Activa" : "Inactiva")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="EditarCategoria" asp-route-id="@categoria.Id" 
+                                                       class="btn btn-sm btn-outline-primary" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a asp-controller="Productos" asp-action="Categoria" asp-route-id="@categoria.Id" 
+                                                       class="btn btn-sm btn-outline-info" title="Ver productos" target="_blank">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                            <h5>No hay categorías</h5>
+                            <p class="text-muted">Crea tu primera categoría para organizar tus productos.</p>
+                            <a asp-action="CrearCategoria" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Crear Primera Categoría
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-sidebar .nav-link {
+            color: #6c757d;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+        }
+    </style>
+} 

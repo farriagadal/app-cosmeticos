@@ -1,0 +1,223 @@
+@model CosmeticosApp.Controllers.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Panel de Administración";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="admin-sidebar">
+                <h4><i class="fas fa-cogs me-2"></i>Panel Admin</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-action="Index">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Productos">
+                            <i class="fas fa-boxes me-2"></i>Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Categorias">
+                            <i class="fas fa-tags me-2"></i>Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Marcas">
+                            <i class="fas fa-trademark me-2"></i>Marcas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Pedidos">
+                            <i class="fas fa-shopping-cart me-2"></i>Pedidos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-chart-line me-2"></i>Dashboard</h1>
+                <div class="text-muted">
+                    Panel de administración
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-boxes fa-2x text-primary mb-2"></i>
+                            <h4>@Model.TotalProductos</h4>
+                            <p class="text-muted">Productos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-success mb-2"></i>
+                            <h4>@Model.TotalUsuarios</h4>
+                            <p class="text-muted">Usuarios</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-2x text-info mb-2"></i>
+                            <h4>@Model.TotalPedidos</h4>
+                            <p class="text-muted">Pedidos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-tags fa-2x text-warning mb-2"></i>
+                            <h4>@Model.TotalCategorias</h4>
+                            <p class="text-muted">Categorías</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-plus me-2"></i>Acciones Rápidas</h5>
+                        </div>
+                        <div class="card-body">
+                            <a asp-action="CrearProducto" class="btn btn-primary btn-block mb-2">
+                                <i class="fas fa-plus me-2"></i>Nuevo Producto
+                            </a>
+                            <a asp-action="CrearCategoria" class="btn btn-success btn-block mb-2">
+                                <i class="fas fa-plus me-2"></i>Nueva Categoría
+                            </a>
+                            <a asp-action="CrearMarca" class="btn btn-info btn-block">
+                                <i class="fas fa-plus me-2"></i>Nueva Marca
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Productos Bajo Stock</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.ProductosBajoStock.Any())
+                            {
+                                @foreach (var producto in Model.ProductosBajoStock)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>@producto.Nombre</span>
+                                        <span class="badge bg-warning">@producto.Stock</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No hay productos con stock bajo</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedidos recientes -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-clock me-2"></i>Pedidos Recientes</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PedidosRecientes.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pedido in Model.PedidosRecientes)
+                                    {
+                                        <tr>
+                                            <td>#@pedido.Id</td>
+                                            <td>@pedido.Usuario.Nombre @pedido.Usuario.Apellido</td>
+                                            <td>@pedido.FechaPedido.ToString("dd/MM/yyyy")</td>
+                                            <td>$@pedido.Total.ToString("N2")</td>
+                                            <td>
+                                                <span class="badge @(pedido.Estado == "Completado" ? "bg-success" : pedido.Estado == "Pendiente" ? "bg-warning" : "bg-secondary")">
+                                                    @pedido.Estado
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a asp-action="DetallePedido" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay pedidos recientes</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-sidebar .nav-link {
+            color: #6c757d;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+    </style>
+} 

@@ -1,0 +1,168 @@
+@model CosmeticosApp.Models.Marca
+
+@{
+    ViewData["Title"] = "Crear Marca";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="admin-sidebar">
+                <h4><i class="fas fa-cogs me-2"></i>Panel Admin</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Productos">
+                            <i class="fas fa-boxes me-2"></i>Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Categorias">
+                            <i class="fas fa-tags me-2"></i>Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-action="Marcas">
+                            <i class="fas fa-trademark me-2"></i>Marcas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Pedidos">
+                            <i class="fas fa-shopping-cart me-2"></i>Pedidos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-plus me-2"></i>Crear Marca</h1>
+                <a asp-action="Marcas" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Marcas
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-trademark me-2"></i>Información de la Marca</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CrearMarca" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Nombre" class="form-label">Nombre de la Marca *</label>
+                                    <input asp-for="Nombre" class="form-control" placeholder="Ej: L'Oréal, Maybelline">
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="3" 
+                                              placeholder="Descripción de la marca..."></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="LogoUrl" class="form-label">URL del Logo (opcional)</label>
+                                    <input asp-for="LogoUrl" class="form-control" type="url" 
+                                           placeholder="https://ejemplo.com/logo.jpg">
+                                    <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="Activa" class="form-check-input" type="checkbox" checked>
+                                    <label asp-for="Activa" class="form-check-label">
+                                        Marca activa
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Marcas existentes:</strong></p>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-star me-2"></i>Maybelline</li>
+                                            <li><i class="fas fa-star me-2"></i>L'Oréal</li>
+                                            <li><i class="fas fa-star me-2"></i>Revlon</li>
+                                            <li><i class="fas fa-star me-2"></i>Neutrogena</li>
+                                            <li><i class="fas fa-star me-2"></i>Dove</li>
+                                        </ul>
+                                        <hr>
+                                        <small class="text-muted">
+                                            <strong>Consejos:</strong><br>
+                                            • Usa un nombre único y reconocible<br>
+                                            • La descripción ayuda a los clientes a conocer la marca<br>
+                                            • El logo mejora la presentación visual
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <a asp-action="Marcas" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Crear Marca
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-sidebar .nav-link {
+            color: #6c757d;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+} 
