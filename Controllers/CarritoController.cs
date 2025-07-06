@@ -5,6 +5,7 @@ using CosmeticosApp.Models;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace CosmeticosApp.Controllers
 {
@@ -172,13 +173,43 @@ namespace CosmeticosApp.Controllers
         [Authorize]
         public async Task<IActionResult> ProcesarPedido(CheckoutViewModel modelo)
         {
-            var carrito = ObtenerCarrito();
-            if (!carrito.Any())
+            // Validar el modelo
+            if (!ModelState.IsValid)
+            {
+                // Si el modelo no es válido, volver a mostrar el checkout con errores
+                var carrito = ObtenerCarrito();
+                foreach (var item in carrito)
+                {
+                    var producto = await _context.Productos.FindAsync(item.ProductoId);
+                    if (producto != null)
+                    {
+                        modelo.CarritoItems.Add(new CarritoItem
+                        {
+                            ProductoId = producto.Id,
+                            Nombre = producto.Nombre,
+                            Precio = producto.Precio,
+                            Cantidad = item.Cantidad,
+                            ImagenUrl = producto.ImagenUrl
+                        });
+                    }
+                }
+                modelo.Total = modelo.CarritoItems.Sum(c => c.Precio * c.Cantidad);
+                return View("Checkout", modelo);
+            }
+
+            var carritoParaProcesar = ObtenerCarrito();
+            if (!carritoParaProcesar.Any())
             {
                 return RedirectToAction(nameof(Index));
             }
 
             var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                // Si el usuario no está autenticado correctamente, redirigir al login
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
             var pedido = new Pedido
             {
                 UsuarioId = usuario.Id,
@@ -192,7 +223,7 @@ namespace CosmeticosApp.Controllers
             await _context.SaveChangesAsync();
 
             decimal total = 0;
-            foreach (var item in carrito)
+            foreach (var item in carritoParaProcesar)
             {
                 var producto = await _context.Productos.FindAsync(item.ProductoId);
                 if (producto != null)
@@ -209,8 +240,17 @@ namespace CosmeticosApp.Controllers
                     _context.DetallesPedidos.Add(detalle);
                     total += detalle.Subtotal;
 
-                    // Actualizar stock
-                    producto.Stock -= item.Cantidad;
+                    // Actualizar stock (con validación de stock disponible)
+                    if (producto.Stock >= item.Cantidad)
+                    {
+                        producto.Stock -= item.Cantidad;
+                    }
+                    else
+                    {
+                        // Si no hay suficiente stock, devolver error
+                        ModelState.AddModelError("", $"No hay suficiente stock para el producto {producto.Nombre}. Stock disponible: {producto.Stock}");
+                        return View("Checkout", modelo);
+                    }
                 }
             }
 
@@ -269,8 +309,13 @@ namespace CosmeticosApp.Controllers
 
     public class CheckoutViewModel
     {
+        [Required(ErrorMessage = "La dirección de entrega es requerida")]
+        [StringLength(500, ErrorMessage = "La dirección no puede exceder 500 caracteres")]
         public string DireccionEntrega { get; set; } = string.Empty;
+        
+        [StringLength(1000, ErrorMessage = "Las notas no pueden exceder 1000 caracteres")]
         public string? Notas { get; set; }
+        
         public decimal Total { get; set; }
         public List<CarritoItem> CarritoItems { get; set; } = new List<CarritoItem>();
     }
