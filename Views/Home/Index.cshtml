@@ -87,7 +87,7 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card h-100 shadow-sm product-card">
                         <div class="product-image-container">
-                            <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/200x200/f8f9fa/6c757d?text=Producto")" 
+                            <img src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop" : producto.ImagenUrl)" 
                                  class="card-img-top" alt="@producto.Nombre">
                             <div class="product-overlay">
                                 <button class="btn btn-primary btn-add-to-cart" 

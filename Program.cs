@@ -70,8 +70,16 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<Usuario>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-        // Asegurar que la base de datos existe
-        context.Database.EnsureCreated();
+        // En desarrollo, recrear la base de datos para aplicar cambios de imágenes
+        if (app.Environment.IsDevelopment())
+        {
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            context.Database.EnsureCreated();
+        }
 
         // Crear roles si no existen
         if (!await roleManager.RoleExistsAsync("Admin"))
