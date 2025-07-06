@@ -1,0 +1,417 @@
+@model CosmeticosApp.Models.Pedido
+
+@{
+    ViewData["Title"] = $"Pedido #{Model.Id}";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-file-invoice me-2"></i>Pedido #@Model.Id</h2>
+                        <p class="text-muted">Detalles completos del pedido</p>
+                    </div>
+                    <div class="header-actions">
+                        <a asp-action="Pedidos" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Pedidos
+                        </a>
+                        <button type="button" class="btn btn-outline-primary" onclick="imprimirPedido()">
+                            <i class="fas fa-print me-2"></i>Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información del Pedido -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shopping-bag me-2"></i>Información del Pedido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label>ID del Pedido:</label>
+                                <span class="badge bg-primary">#@Model.Id</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Fecha del Pedido:</label>
+                                <span>@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Estado:</label>
+                                <span class="badge @GetEstadoBadgeClass(Model.Estado)">
+                                    @GetEstadoTexto(Model.Estado)
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label>Total:</label>
+                                <span class="price-total">$@Model.Total.ToString("N2")</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Método de Pago:</label>
+                                <span>Transferencia</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Notas:</label>
+                                <span>@(Model.Notas ?? "Sin notas")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos del Pedido -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-boxes me-2"></i>Productos del Pedido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in Model.DetallesPedidos)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(detalle.Producto.ImagenUrl) ? "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=60&h=60&fit=crop" : detalle.Producto.ImagenUrl)" 
+                                                     alt="@detalle.Producto.Nombre" 
+                                                     class="product-thumb me-3">
+                                                <div>
+                                                    <strong>@detalle.Producto.Nombre</strong>
+                                                    <br><small class="text-muted">@detalle.Producto.Marca.Nombre</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$@detalle.PrecioUnitario.ToString("N2")</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">@detalle.Cantidad</span>
+                                        </td>
+                                        <td>
+                                            <strong>$@detalle.Subtotal.ToString("N2")</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-active">
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><strong class="text-success">$@Model.Total.ToString("N2")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del Cliente y Envío -->
+        <div class="col-lg-4">
+            <!-- Cliente -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Cliente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="client-info">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="client-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">@Model.Usuario.Nombre @Model.Usuario.Apellido</h6>
+                                <small class="text-muted">@Model.Usuario.Email</small>
+                            </div>
+                        </div>
+                        <div class="client-details">
+                            <div class="detail-item">
+                                <i class="fas fa-phone me-2"></i>
+                                <span>@(Model.Usuario.PhoneNumber ?? "No registrado")</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope me-2"></i>
+                                <span>@Model.Usuario.Email</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dirección de Envío -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Dirección de Envío
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="shipping-info">
+                        <p class="mb-2">
+                            <i class="fas fa-home me-2"></i>
+                            <strong>@(Model.DireccionEntrega ?? "No especificada")</strong>
+                        </p>
+                        <p class="mb-0">
+                            <i class="fas fa-city me-2"></i>
+                            @(Model.DireccionEntrega ?? "No especificada")
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cambiar Estado -->
+            @if (Model.Estado != "Entregado" && Model.Estado != "Cancelado")
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-cog me-2"></i>Cambiar Estado
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="ActualizarEstadoPedido" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Estado actual: <span class="badge @GetEstadoBadgeClass(Model.Estado)">@GetEstadoTexto(Model.Estado)</span></label>
+                                <select name="estado" class="form-select" required>
+                                    <option value="">Seleccionar nuevo estado</option>
+                                    @if (Model.Estado == "Pendiente")
+                                    {
+                                        <option value="Procesando">Procesando</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    }
+                                    @if (Model.Estado == "Procesando")
+                                    {
+                                        <option value="Enviado">Enviado</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    }
+                                    @if (Model.Estado == "Enviado")
+                                    {
+                                        <option value="Entregado">Entregado</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Actualizar Estado
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5>Pedido @Model.Estado</h5>
+                        <p class="text-muted">Este pedido ya no puede ser modificado.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetEstadoBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => "bg-warning",
+            "Procesando" => "bg-info",
+            "Enviado" => "bg-primary",
+            "Entregado" => "bg-success",
+            "Cancelado" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetEstadoTexto(string estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => "Pendiente",
+            "Procesando" => "Procesando",
+            "Enviado" => "Enviado",
+            "Entregado" => "Entregado",
+            "Cancelado" => "Cancelado",
+            _ => "Desconocido"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .info-group span {
+            display: block;
+            color: #6c757d;
+        }
+
+        .price-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .product-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .client-details {
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .detail-item i {
+            color: #007bff;
+            width: 20px;
+        }
+
+        .shipping-info p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .shipping-info i {
+            color: #007bff;
+            width: 20px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .header-actions .btn {
+            margin-left: 10px;
+        }
+
+        @@media (max-width: 768px) {
+            .page-header {
+                text-align: center;
+            }
+
+            .header-actions {
+                margin-top: 20px;
+            }
+
+            .info-group {
+                margin-bottom: 10px;
+            }
+
+            .client-info {
+                text-align: center;
+            }
+
+            .client-avatar {
+                margin: 0 auto 15px auto;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function imprimirPedido() {
+            window.print();
+        }
+    </script>
+} 

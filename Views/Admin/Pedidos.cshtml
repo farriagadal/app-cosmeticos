@@ -1,0 +1,471 @@
+@model IEnumerable<CosmeticosApp.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Gestión de Pedidos";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-shopping-bag me-2"></i>Gestión de Pedidos</h2>
+                        <p class="text-muted">Administra todos los pedidos del sistema</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary" onclick="exportarPedidos()">
+                                <i class="fas fa-download me-2"></i>Exportar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
+                                <i class="fas fa-sync me-2"></i>Actualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon bg-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>@Model.Count()</h3>
+                    <p>Total Pedidos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>@Model.Count(p => p.Estado == "Entregado")</h3>
+                    <p>Completados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon bg-warning">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>@Model.Count(p => p.Estado == "Pendiente" || p.Estado == "Procesando")</h3>
+                    <p>Pendientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon bg-info">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>$@Model.Sum(p => p.Total).ToString("N2")</h3>
+                    <p>Total Ventas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select" id="filtroEstado">
+                                <option value="">Todos los estados</option>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Procesando">Procesando</option>
+                                <option value="Enviado">Enviado</option>
+                                <option value="Entregado">Entregado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha desde</label>
+                            <input type="date" class="form-control" id="fechaDesde">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha hasta</label>
+                            <input type="date" class="form-control" id="fechaHasta">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" class="form-control" id="buscarPedido" placeholder="ID, email o nombre...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Pedidos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Lista de Pedidos</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tablaPedidos">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Dirección</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pedido in Model)
+                                    {
+                                        <tr data-estado="@pedido.Estado" 
+                                            data-fecha="@pedido.FechaPedido.ToString("yyyy-MM-dd")" 
+                                            data-cliente="@pedido.Usuario.Email @pedido.Usuario.Nombre @pedido.Usuario.Apellido">
+                                            <td>
+                                                <span class="badge bg-light text-dark">#@pedido.Id</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                                                        <strong>@pedido.Usuario.Nombre @pedido.Usuario.Apellido</strong>
+                                    <small class="text-muted">@pedido.Usuario.Email</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span>@pedido.FechaPedido.ToString("dd/MM/yyyy")</span>
+                                                    <small class="text-muted">@pedido.FechaPedido.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-success">$@pedido.Total.ToString("N2")</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @GetEstadoBadgeClass(pedido.Estado)">
+                                                    @GetEstadoTexto(pedido.Estado)
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                                                                    <span>@pedido.DireccionEntrega</span>
+                                                <small class="text-muted">@(pedido.DireccionEntrega ?? "N/A")</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="DetallePedido" asp-route-id="@pedido.Id" 
+                                                       class="btn btn-sm btn-outline-primary" 
+                                                       title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (pedido.Estado != "Entregado" && pedido.Estado != "Cancelado")
+                                                    {
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                                    data-bs-toggle="dropdown" title="Cambiar estado">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                @if (pedido.Estado == "Pendiente")
+                                                                {
+                                                                    <li><a class="dropdown-item" onclick="cambiarEstado(@pedido.Id, 'Procesando')">
+                                                                        <i class="fas fa-cog me-2"></i>Procesando
+                                                                    </a></li>
+                                                                }
+                                                                @if (pedido.Estado == "Procesando")
+                                                                {
+                                                                    <li><a class="dropdown-item" onclick="cambiarEstado(@pedido.Id, 'Enviado')">
+                                                                        <i class="fas fa-shipping-fast me-2"></i>Enviado
+                                                                    </a></li>
+                                                                }
+                                                                @if (pedido.Estado == "Enviado")
+                                                                {
+                                                                    <li><a class="dropdown-item" onclick="cambiarEstado(@pedido.Id, 'Entregado')">
+                                                                        <i class="fas fa-check-circle me-2"></i>Entregado
+                                                                    </a></li>
+                                                                }
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" onclick="cambiarEstado(@pedido.Id, 'Cancelado')">
+                                                                    <i class="fas fa-times-circle me-2"></i>Cancelar
+                                                                </a></li>
+                                                            </ul>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                            <h4>No hay pedidos</h4>
+                            <p class="text-muted">Aún no se han realizado pedidos en el sistema.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetEstadoBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => "bg-warning",
+            "Procesando" => "bg-info",
+            "Enviado" => "bg-primary",
+            "Entregado" => "bg-success",
+            "Cancelado" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetEstadoTexto(string estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => "Pendiente",
+            "Procesando" => "Procesando",
+            "Enviado" => "Enviado",
+            "Entregado" => "Entregado",
+            "Cancelado" => "Cancelado",
+            _ => "Desconocido"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .stats-content h3 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stats-content p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .header-actions .btn {
+            margin-left: 10px;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-group .btn {
+            margin-right: 5px;
+        }
+
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+        }
+
+        @@media (max-width: 768px) {
+            .stats-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .page-header {
+                text-align: center;
+            }
+
+            .header-actions {
+                margin-top: 20px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Filtros
+            $('#filtroEstado, #fechaDesde, #fechaHasta, #buscarPedido').on('change input', function() {
+                filtrarPedidos();
+            });
+
+            function filtrarPedidos() {
+                const estado = $('#filtroEstado').val().toLowerCase();
+                const fechaDesde = $('#fechaDesde').val();
+                const fechaHasta = $('#fechaHasta').val();
+                const buscar = $('#buscarPedido').val().toLowerCase();
+
+                $('#tablaPedidos tbody tr').each(function() {
+                    const $row = $(this);
+                    const estadoRow = $row.data('estado').toLowerCase();
+                    const fechaRow = $row.data('fecha');
+                    const clienteRow = $row.data('cliente').toLowerCase();
+
+                    let mostrar = true;
+
+                    // Filtro por estado
+                    if (estado && estadoRow !== estado) {
+                        mostrar = false;
+                    }
+
+                    // Filtro por fecha desde
+                    if (fechaDesde && fechaRow < fechaDesde) {
+                        mostrar = false;
+                    }
+
+                    // Filtro por fecha hasta
+                    if (fechaHasta && fechaRow > fechaHasta) {
+                        mostrar = false;
+                    }
+
+                    // Filtro por búsqueda
+                    if (buscar && !clienteRow.includes(buscar) && !$row.text().toLowerCase().includes(buscar)) {
+                        mostrar = false;
+                    }
+
+                    $row.toggle(mostrar);
+                });
+            }
+        });
+
+        // Cambiar estado del pedido
+        function cambiarEstado(pedidoId, nuevoEstado) {
+            if (confirm(`¿Estás seguro de cambiar el estado del pedido #${pedidoId} a "${nuevoEstado}"?`)) {
+                $.post('/Admin/ActualizarEstadoPedido', {
+                    id: pedidoId,
+                    estado: nuevoEstado
+                })
+                .done(function() {
+                    location.reload();
+                })
+                .fail(function() {
+                    alert('Error al actualizar el estado del pedido');
+                });
+            }
+        }
+
+        // Exportar pedidos (placeholder)
+        function exportarPedidos() {
+            alert('Funcionalidad de exportación - En desarrollo');
+        }
+    </script>
+} 

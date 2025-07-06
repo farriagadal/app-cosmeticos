@@ -1,0 +1,428 @@
+@model CosmeticosApp.Models.Producto
+
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Productos" asp-action="Index">Productos</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Productos" asp-action="Categoria" asp-route-id="@Model.CategoriaId">@Model.Categoria.Nombre</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Nombre</li>
+        </ol>
+    </nav>
+
+    <!-- Producto Principal -->
+    <div class="row">
+        <!-- Imagen del producto -->
+        <div class="col-lg-6 mb-4">
+            <div class="product-image-container">
+                <img src="@(string.IsNullOrEmpty(Model.ImagenUrl) ? "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=500&h=500&fit=crop" : Model.ImagenUrl)" 
+                     alt="@Model.Nombre" 
+                     class="img-fluid rounded shadow product-main-image"
+                     id="mainProductImage">
+            </div>
+        </div>
+
+        <!-- Información del producto -->
+        <div class="col-lg-6">
+            <div class="product-info">
+                <!-- Badges -->
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2">@Model.Categoria.Nombre</span>
+                    <span class="badge bg-secondary">@Model.Marca.Nombre</span>
+                </div>
+
+                <!-- Título -->
+                <h1 class="product-title mb-3">@Model.Nombre</h1>
+
+                <!-- Precio -->
+                <div class="price-section mb-4">
+                    <span class="current-price">$@Model.Precio.ToString("N2")</span>
+                </div>
+
+                <!-- Descripción -->
+                <div class="product-description mb-4">
+                    <h5>Descripción</h5>
+                    <p class="text-muted">@Model.Descripcion</p>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="product-details mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Código:</small><br>
+                            <strong>@(Model.Codigo ?? "N/A")</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Stock disponible:</small><br>
+                            <span class="badge @(Model.Stock > 10 ? "bg-success" : Model.Stock > 0 ? "bg-warning" : "bg-danger")">
+                                @Model.Stock unidades
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cantidad y Agregar al carrito -->
+                <div class="add-to-cart-section">
+                    @if (Model.Stock > 0)
+                    {
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <label for="cantidad" class="form-label">Cantidad:</label>
+                                <input type="number" class="form-control" id="cantidad" value="1" min="1" max="@Model.Stock">
+                            </div>
+                            <div class="col-8">
+                                <button class="btn btn-primary btn-lg w-100 btn-add-to-cart" 
+                                        data-product-id="@Model.Id" 
+                                        data-product-name="@Model.Nombre">
+                                    <i class="fas fa-shopping-cart me-2"></i>Agregar al Carrito
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Producto agotado. ¡Vuelve pronto!
+                        </div>
+                    }
+                </div>
+
+                <!-- Acciones adicionales -->
+                <div class="additional-actions mt-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <a asp-controller="Productos" asp-action="Marca" asp-route-id="@Model.MarcaId" 
+                               class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-star me-2"></i>Más de @Model.Marca.Nombre
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="Productos" asp-action="Categoria" asp-route-id="@Model.CategoriaId" 
+                               class="btn btn-outline-info w-100">
+                                <i class="fas fa-tags me-2"></i>Ver Categoría
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos Relacionados -->
+    @if (ViewBag.ProductosRelacionados != null && ((List<CosmeticosApp.Models.Producto>)ViewBag.ProductosRelacionados).Any())
+    {
+        <div class="related-products mt-5">
+            <div class="section-header mb-4">
+                <h3><i class="fas fa-heart me-2"></i>Te puede interesar</h3>
+                <p class="text-muted">Otros productos de @Model.Categoria.Nombre</p>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var producto in (List<CosmeticosApp.Models.Producto>)ViewBag.ProductosRelacionados)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 shadow-sm product-card">
+                            <div class="product-image-container">
+                                <img src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop" : producto.ImagenUrl)" 
+                                     class="card-img-top" alt="@producto.Nombre">
+                                <div class="product-overlay">
+                                    <a asp-action="Details" asp-route-id="@producto.Id" class="btn btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="mb-2">
+                                    <small class="text-muted">@producto.Marca.Nombre</small>
+                                </div>
+                                <h6 class="card-title">@producto.Nombre</h6>
+                                <p class="card-text small text-muted flex-grow-1">
+                                    @(producto.Descripcion.Length > 80 ? 
+                                      producto.Descripcion.Substring(0, 80) + "..." : 
+                                      producto.Descripcion)
+                                </p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h6 mb-0 text-primary">$@producto.Precio.ToString("N2")</span>
+                                        <button class="btn btn-outline-primary btn-sm btn-add-to-cart-related" 
+                                                data-product-id="@producto.Id" 
+                                                data-product-name="@producto.Nombre">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Botón volver -->
+    <div class="back-section mt-5">
+        <a asp-controller="Productos" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Catálogo
+        </a>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .product-main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-main-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .product-description {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+        }
+
+        .product-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .add-to-cart-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-image-container:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #6c757d;
+        }
+
+        .btn-add-to-cart {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add-to-cart:disabled {
+            opacity: 0.6;
+        }
+
+        .loading-spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @@media (max-width: 768px) {
+            .product-title {
+                font-size: 1.5rem;
+            }
+            
+            .current-price {
+                font-size: 2rem;
+            }
+            
+            .product-main-image {
+                height: 300px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Agregar al carrito - producto principal
+            $('.btn-add-to-cart').click(function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+                var cantidad = $('#cantidad').val();
+                var $button = $(this);
+                
+                // Validar cantidad
+                if (cantidad < 1) {
+                    alert('Por favor, selecciona una cantidad válida');
+                    return;
+                }
+                
+                // Mostrar loading
+                var originalText = $button.html();
+                $button.html('<span class="loading-spinner me-2"></span>Agregando...');
+                $button.prop('disabled', true);
+                
+                $.post('/Carrito/Agregar', { 
+                    productoId: productId, 
+                    cantidad: parseInt(cantidad) 
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        $('#cart-count').text(response.cantidadTotal);
+                        
+                        // Mostrar toast de éxito
+                        showToast(`${productName} agregado al carrito`, 'success');
+                        
+                        // Resetear cantidad
+                        $('#cantidad').val(1);
+                    }
+                })
+                .fail(function() {
+                    showToast('Error al agregar el producto al carrito', 'error');
+                })
+                .always(function() {
+                    // Restaurar botón
+                    $button.html(originalText);
+                    $button.prop('disabled', false);
+                });
+            });
+
+            // Agregar al carrito - productos relacionados
+            $('.btn-add-to-cart-related').click(function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+                var $button = $(this);
+                
+                // Mostrar loading
+                var originalText = $button.html();
+                $button.html('<span class="loading-spinner"></span>');
+                $button.prop('disabled', true);
+                
+                $.post('/Carrito/Agregar', { 
+                    productoId: productId, 
+                    cantidad: 1 
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        $('#cart-count').text(response.cantidadTotal);
+                        showToast(`${productName} agregado al carrito`, 'success');
+                    }
+                })
+                .fail(function() {
+                    showToast('Error al agregar el producto al carrito', 'error');
+                })
+                .always(function() {
+                    // Restaurar botón
+                    $button.html(originalText);
+                    $button.prop('disabled', false);
+                });
+            });
+
+            // Función para mostrar toasts
+            function showToast(message, type) {
+                var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+                var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+                
+                var toast = `
+                    <div class="toast align-items-center text-white ${bgClass} border-0 position-fixed top-0 end-0 m-3" 
+                         role="alert" style="z-index: 1056;">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="${icon} me-2"></i>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                                    data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `;
+                
+                $('body').append(toast);
+                var toastElement = new bootstrap.Toast($('.toast').last());
+                toastElement.show();
+                
+                setTimeout(function() {
+                    $('.toast').last().remove();
+                }, 4000);
+            }
+
+            // Validación de cantidad en tiempo real
+            $('#cantidad').on('input', function() {
+                var cantidad = parseInt($(this).val());
+                var maxStock = parseInt($(this).attr('max'));
+                
+                if (cantidad > maxStock) {
+                    $(this).val(maxStock);
+                    showToast(`Cantidad máxima disponible: ${maxStock}`, 'error');
+                }
+                
+                if (cantidad < 1) {
+                    $(this).val(1);
+                }
+            });
+        });
+    </script>
+} 
