@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CosmeticosApp.Data;
 using CosmeticosApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace CosmeticosApp.Controllers
 {
@@ -10,10 +11,12 @@ namespace CosmeticosApp.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context, ILogger<AdminController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // Dashboard principal del admin
@@ -71,8 +74,14 @@ namespace CosmeticosApp.Controllers
             {
                 _context.Productos.Add(producto);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Producto creado correctamente";
                 return RedirectToAction(nameof(Productos));
             }
+
+            var errores = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            _logger.LogWarning("Valores recibidos: CategoriaId={CategoriaId}, MarcaId={MarcaId}", Request.Form["CategoriaId"], Request.Form["MarcaId"]);
+            _logger.LogWarning("Errores al crear producto: {Errores}", string.Join(" | ", errores));
+            TempData["ErrorMessage"] = string.Join(" | ", errores);
 
             ViewBag.Categorias = await _context.Categorias.Where(c => c.Activa).ToListAsync();
             ViewBag.Marcas = await _context.Marcas.Where(m => m.Activa).ToListAsync();

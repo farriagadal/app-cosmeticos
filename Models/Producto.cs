@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CosmeticosApp.Models
 {
@@ -39,8 +40,13 @@ namespace CosmeticosApp.Models
         public int MarcaId { get; set; }
 
         // Relaciones
-        public virtual Categoria Categoria { get; set; } = null!;
-        public virtual Marca Marca { get; set; } = null!;
+        [ValidateNever]
+        public virtual Categoria? Categoria { get; set; }
+
+        [ValidateNever]
+        public virtual Marca? Marca { get; set; }
+
+        [ValidateNever]
         public virtual ICollection<DetallePedido> DetallesPedidos { get; set; } = new List<DetallePedido>();
     }
 } 
