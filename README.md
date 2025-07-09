@@ -1,283 +1,191 @@
-# 🛍️ Cosmética Bella - Ecommerce de Cosméticos
+# 🛍️ Cosmetics App - Guía de Instalación Completa
 
-Una aplicación web completa de ecommerce para la venta de productos cosméticos, desarrollada con **ASP.NET Core MVC** y **MySQL**.
-
-## 🚀 Características
-
-- **Catálogo de productos** con filtros por categoría, marca y precio
-- **Sistema de carrito de compras** con sesiones
-- **Autenticación y autorización** de usuarios
-- **Panel de administración** completo
-- **Gestión de pedidos** y estados
-- **Diseño responsive** y moderno
-- **6 entidades principales** (Usuario, Producto, Categoría, Marca, Pedido, DetallePedido)
-
-## 🛠️ Tecnologías Utilizadas
-
-- **Backend**: ASP.NET Core 8.0 MVC
-- **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript/jQuery
-- **Base de datos**: MySQL
-- **ORM**: Entity Framework Core
-- **Autenticación**: ASP.NET Core Identity
+Esta guía te llevará paso a paso para instalar y ejecutar la aplicación de ecommerce de cosméticos en tu máquina Windows local.
 
 ## 📋 Requisitos Previos
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [MySQL Server 8.0 o superior](https://dev.mysql.com/downloads/mysql/)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) o [VS Code](https://code.visualstudio.com/)
+Antes de comenzar, necesitas instalar los siguientes programas:
 
-## 🔧 Instalación y Configuración
+**Elige UNA de estas dos opciones:**
 
-### 1. Clonar el repositorio
+### Opción A: Visual Studio 2022 Community (Completo)
+- Descarga desde: https://visualstudio.microsoft.com/es/vs/community/
+- Durante la instalación, selecciona:
+  - ✅ **Desarrollo de ASP.NET y web**
+  - ✅ **Desarrollo multiplataforma de .NET**
+  - ✅ **Git para Windows** (si no lo tienes instalado)
+
+**✅ Ventajas:**
+- Todo integrado (debugger, NuGet, Entity Framework)
+- Interfaz visual para Entity Framework
+- Mejor IntelliSense y refactoring
+- Ideal para principiantes
+
+**❌ Desventajas:**
+- Consume más recursos (RAM/CPU)
+- Instalación más pesada (~3GB)
+- Menos personalizable
+
+### Opción B: Visual Studio Code (Ligero)
+- Descarga desde: https://code.visualstudio.com/
+- **Instala .NET SDK 6.0 o superior** desde: https://dotnet.microsoft.com/download
+- **Instala Git para Windows** desde: https://git-scm.com/download/win
+- **Extensiones requeridas en VS Code:**
+  - C# (Microsoft)
+  - C# Dev Kit (Microsoft)
+  - .NET Install Tool (Microsoft)
+
+**✅ Ventajas:**
+- Muy ligero y rápido
+- Altamente personalizable
+- Mejor para desarrollo multiplataforma
+- Gratis y open source
+
+**❌ Desventajas:**
+- Requiere más configuración manual
+- Necesita comandos de terminal
+- Menos herramientas visuales integradas
+
+### 🎯 ¿Cuál elegir?
+
+**Recomendamos Visual Studio 2022 si:**
+- Eres nuevo en desarrollo .NET
+- Prefieres interfaces gráficas
+- Quieres todo funcionando sin configuración
+- No te importa usar más recursos del sistema
+
+**Recomendamos Visual Studio Code si:**
+- Ya tienes experiencia en desarrollo
+- Te gusta usar terminal/línea de comandos
+- Tu PC tiene recursos limitados
+- Prefieres un editor más minimalista y rápido
+
+### 2. MySQL Server
+- Descarga desde: https://dev.mysql.com/downloads/mysql/
+- Selecciona: **MySQL Installer for Windows**
+- Durante la instalación:
+  - Tipo de instalación: **Developer Default**
+  - Configuración del servidor: **Standalone MySQL Server**
+  - Método de autenticación: **Use Strong Password Encryption**
+  - Configura una contraseña para el usuario **root** (anótala, la necesitarás)
+
+### 3. MySQL Workbench (Opcional pero recomendado)
+- Se instala automáticamente con MySQL Installer
+- Te permitirá administrar la base de datos de forma visual
+
+## 🚀 Instalación del Proyecto
+
+### Paso 1: Obtener el Código
 ```bash
-git clone https://github.com/tu-usuario/cosmeticos-app.git
-cd cosmeticos-app
+# Si tienes Git instalado:
+git clone https://github.com/farriagadal/app-cosmeticos
+
+# O descarga el ZIP del proyecto y descomprímelo
 ```
 
-### 2. Instalar MySQL
+### Paso 2: Configurar la Base de Datos
 
-#### Windows:
-1. Descargar MySQL Installer desde [mysql.com](https://dev.mysql.com/downloads/installer/)
-2. Ejecutar el instalador y seleccionar "MySQL Server"
-3. Configurar la contraseña root durante la instalación
-4. Instalar MySQL Workbench (opcional pero recomendado)
+#### 2.1 Crear la Base de Datos
+1. Abre **MySQL Workbench**
+2. Conecta con tu servidor local usando:
+   - Host: `localhost`
+   - Port: `3306`
+   - Usuario: `root`
+   - Contraseña: (la que configuraste durante la instalación)
 
-#### macOS:
-```bash
-brew install mysql
-brew services start mysql
-mysql_secure_installation
-```
-
-#### Ubuntu/Debian:
-```bash
-sudo apt update
-sudo apt install mysql-server
-sudo mysql_secure_installation
-```
-
-### 3. Configurar la base de datos
-
-1. **Conectar a MySQL**:
-```bash
-mysql -u root -p
-```
-
-2. **Crear la base de datos**:
+3. Ejecuta el siguiente comando para crear la base de datos:
 ```sql
 CREATE DATABASE cosmeticos_db;
-CREATE USER 'cosmeticos_user'@'localhost' IDENTIFIED BY 'tu_contraseña_segura';
-GRANT ALL PRIVILEGES ON cosmeticos_db.* TO 'cosmeticos_user'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
 ```
 
-### 4. Configurar la aplicación
+#### 2.2 Configurar la Cadena de Conexión
+1. Navega a la carpeta del proyecto
+2. Abre el archivo `appsettings.json`
+3. Modifica la cadena de conexión con tu configuración:
 
-1. **Actualizar la cadena de conexión**:
-Editar `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Port=3306;Database=cosmeticos_db;Uid=cosmeticos_user;Pwd=tu_contraseña_segura;"
+    "DefaultConnection": "Server=localhost;Database=cosmeticos_db;Uid=root;Pwd=TU_CONTRASEÑA_AQUI;"
   }
 }
 ```
 
-2. **Restaurar paquetes NuGet**:
-```bash
-dotnet restore
-```
+**⚠️ Importante:** Reemplaza `TU_CONTRASEÑA_AQUI` con la contraseña que configuraste para MySQL.
 
-3. **Crear y aplicar migraciones**:
+### Paso 3: Abrir el Proyecto
+
+#### 🔴 Si elegiste Visual Studio 2022:
+
+1. Abre **Visual Studio 2022**
+2. Selecciona **Abrir un proyecto o solución**
+3. Navega a la carpeta del proyecto y selecciona `CosmeticosApp.csproj`
+4. Espera a que Visual Studio cargue el proyecto
+
+#### 🔵 Si elegiste Visual Studio Code:
+
+1. Abre **Visual Studio Code**
+2. Ve a **File** → **Open Folder**
+3. Selecciona la carpeta del proyecto completa
+4. Instala las extensiones requeridas si no las tienes:
+   - Presiona `Ctrl+Shift+X`
+   - Busca e instala: **C#**, **C# Dev Kit**, **.NET Install Tool**
+5. Presiona `Ctrl+Shift+P` y busca **".NET: Restore"** para restaurar dependencias
+
+### Paso 4: Restaurar Dependencias y Crear la Base de Datos
+
+#### 🔴 Si usas Visual Studio 2022:
+
+1. Ve a **Herramientas** → **Administrador de paquetes NuGet** → **Consola del Administrador de paquetes**
+2. Ejecuta los siguientes comandos uno por uno:
+
 ```bash
+# Restaurar dependencias
+dotnet restore
+
+# Crear las migraciones (si no existen)
 dotnet ef migrations add InitialCreate
+
+# Aplicar las migraciones y crear las tablas
 dotnet ef database update
 ```
 
-### 5. Ejecutar la aplicación
+#### 🔵 Si usas Visual Studio Code:
 
+1. Abre la terminal integrada: **View** → **Terminal** (o `Ctrl+` `)
+2. Ejecuta los siguientes comandos uno por uno:
+
+```bash
+# Restaurar dependencias
+dotnet restore
+
+# Instalar herramientas Entity Framework (solo la primera vez)
+dotnet tool install --global dotnet-ef
+
+# Crear las migraciones (si no existen)
+dotnet ef migrations add InitialCreate
+
+# Aplicar las migraciones y crear las tablas
+dotnet ef database update
+```
+
+### Paso 5: Ejecutar la Aplicación
+
+#### 🔴 Si usas Visual Studio 2022:
+
+1. Presiona **F5** o haz clic en el botón **▶️ Ejecutar**
+2. La aplicación se abrirá en tu navegador predeterminado
+
+#### 🔵 Si usas Visual Studio Code:
+
+1. En la terminal, ejecuta:
 ```bash
 dotnet run
 ```
 
-La aplicación estará disponible en: `https://localhost:5001`
-
-## 👤 Credenciales de Administrador
-
-- **Email**: admin@cosmeticos.com
-- **Contraseña**: Admin123!
-
-## 🏗️ Estructura del Proyecto
-
+2. Verás algo como:
 ```
-CosmeticosApp/
-├── Controllers/           # Controladores MVC
-│   ├── HomeController.cs
-│   ├── ProductosController.cs
-│   ├── CarritoController.cs
-│   └── AdminController.cs
-├── Models/               # Modelos de datos
-│   ├── Usuario.cs
-│   ├── Producto.cs
-│   ├── Categoria.cs
-│   ├── Marca.cs
-│   ├── Pedido.cs
-│   └── DetallePedido.cs
-├── Views/               # Vistas Razor
-│   ├── Home/
-│   ├── Productos/
-│   ├── Carrito/
-│   └── Admin/
-├── Data/                # Contexto de base de datos
-│   └── ApplicationDbContext.cs
-├── wwwroot/             # Archivos estáticos
-│   ├── css/
-│   ├── js/
-│   └── images/
-└── Program.cs           # Configuración de la aplicación
+Now listening on: http://localhost:5000
 ```
 
-## 🗃️ Entidades del Sistema
-
-### Usuario (hereda de IdentityUser)
-- Información personal del usuario
-- Historial de pedidos
-- Roles (Admin/Cliente)
-
-### Producto
-- Información del producto
-- Precio y stock
-- Relaciones con Categoría y Marca
-
-### Categoría
-- Organización de productos
-- Descripción e imagen
-
-### Marca
-- Información de la marca
-- Logo y descripción
-
-### Pedido
-- Información del pedido
-- Estado y fecha
-- Dirección de entrega
-
-### DetallePedido
-- Items específicos del pedido
-- Cantidad y precios
-
-## 🎨 Funcionalidades Principales
-
-### Para Clientes:
-- **Navegación del catálogo** con filtros avanzados
-- **Carrito de compras** persistente
-- **Proceso de checkout** completo
-- **Gestión de perfil** de usuario
-
-### Para Administradores:
-- **Dashboard** con estadísticas
-- **Gestión de productos** (CRUD completo)
-- **Gestión de categorías y marcas**
-- **Seguimiento de pedidos**
-- **Gestión de usuarios**
-
-## 🔍 Comandos Útiles
-
-### Entity Framework
-```bash
-# Crear nueva migración
-dotnet ef migrations add NombreMigracion
-
-# Aplicar migraciones
-dotnet ef database update
-
-# Eliminar última migración
-dotnet ef migrations remove
-
-# Ver migraciones aplicadas
-dotnet ef database update --verbose
-```
-
-### Desarrollo
-```bash
-# Ejecutar en modo desarrollo
-dotnet run --environment Development
-
-# Ejecutar con hot reload
-dotnet watch run
-
-# Compilar el proyecto
-dotnet build
-
-# Ejecutar tests
-dotnet test
-```
-
-## 🚨 Solución de Problemas
-
-### Error de conexión a MySQL
-- Verificar que MySQL esté ejecutándose
-- Comprobar la cadena de conexión
-- Verificar permisos de usuario
-
-### Error de migraciones
-```bash
-# Eliminar base de datos y recrear
-dotnet ef database drop
-dotnet ef database update
-```
-
-### Puerto ocupado
-```bash
-# Cambiar puerto en launchSettings.json
-"applicationUrl": "https://localhost:5002;http://localhost:5001"
-```
-
-## 📱 Responsive Design
-
-La aplicación está completamente optimizada para:
-- **Desktop** (1200px+)
-- **Tablet** (768px - 1199px)
-- **Mobile** (< 768px)
-
-## 🔐 Seguridad
-
-- Autenticación ASP.NET Core Identity
-- Autorización basada en roles
-- Validación de datos del lado servidor
-- Protección CSRF
-- Sanitización de datos
-
-## 🎯 Próximas Mejoras
-
-- [ ] Sistema de reseñas y calificaciones
-- [ ] Integración con pasarelas de pago
-- [ ] Notificaciones por email
-- [ ] Sistema de wishlist
-- [ ] Reportes avanzados
-- [ ] API REST para móviles
-
-## 📄 Licencia
-
-Este proyecto fue desarrollado como proyecto universitario.
-
-## 👥 Contribuciones
-
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature
-3. Commit tus cambios
-4. Push a la rama
-5. Abre un Pull Request
-
-## 📞 Soporte
-
-Para soporte o preguntas, contacta a través de:
-- Email: soporte@cosmeticabella.com
-- Issues en GitHub
-
----
-
-⭐ **¡Si te gustó el proyecto, no olvides darle una estrella!** ⭐ 
+Abrir http://localhost:5000 en el navegador y listo
