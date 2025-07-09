@@ -144,6 +144,21 @@ namespace CosmeticosApp.Controllers
             return RedirectToAction(nameof(Productos));
         }
 
+        // POST: Admin/ActivarProducto/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivarProducto(int id)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto != null)
+            {
+                producto.Activo = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Productos));
+        }
+
         #endregion
 
         #region Pedidos
