@@ -14,7 +14,7 @@ namespace CosmeticosApp.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Total { get; set; }
+        public decimal Total { get; set; } // Total en CLP (pesos chilenos)
 
         [Required]
         [StringLength(50)]

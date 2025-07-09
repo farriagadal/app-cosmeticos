@@ -18,10 +18,10 @@ namespace CosmeticosApp.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PrecioUnitario { get; set; }
+        public decimal PrecioUnitario { get; set; } // Precio unitario en CLP (pesos chilenos)
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Subtotal { get; set; }
+        public decimal Subtotal { get; set; } // Subtotal en CLP (pesos chilenos)
 
         // Relaciones
         public virtual Pedido Pedido { get; set; } = null!;

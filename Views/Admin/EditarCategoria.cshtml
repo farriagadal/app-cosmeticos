@@ -1,0 +1,150 @@
+@model CosmeticosApp.Models.Categoria
+
+@{
+    ViewData["Title"] = "Editar Categoría";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-edit me-2"></i>Editar Categoría</h2>
+                        <p class="text-muted">Modifica la información de la categoría</p>
+                    </div>
+                    <div class="header-actions">
+                        <a asp-action="Categorias" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Categorías
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tag me-2"></i>Información de la Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditarCategoria" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="Nombre" class="form-label">Nombre de la Categoría *</label>
+                                    <input asp-for="Nombre" class="form-control" placeholder="Ej: Maquillaje, Cuidado Facial">
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Descripción de la categoría..."></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ImagenUrl" class="form-label">URL de Imagen (opcional)</label>
+                                    <input asp-for="ImagenUrl" class="form-control" type="url" placeholder="https://ejemplo.com/imagen.jpg">
+                                    <span asp-validation-for="ImagenUrl" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="Activa" class="form-check-input" type="checkbox">
+                                    <label asp-for="Activa" class="form-check-label">
+                                        Categoría activa
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <small class="text-muted">
+                                            <strong>ID:</strong> @Model.Id<br>
+                                            <strong>Productos asociados:</strong> @Model.Productos.Count()
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <a asp-action="Categorias" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .header-actions .btn {
+            margin-left: 10px;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+    </style>
+} 

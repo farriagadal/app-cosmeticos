@@ -111,11 +111,21 @@ function mostrarToast(message, type = 'success') {
     }, 3000);
 }
 
-// Función para formatear números como moneda
+// Función para formatear números como moneda CLP
 function formatearMoneda(numero) {
-    return new Intl.NumberFormat('es-US', {
+    return new Intl.NumberFormat('es-CL', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'CLP'
+    }).format(numero);
+}
+
+// Función específica para formatear precios en pesos chilenos
+function formatearPrecioCLP(numero) {
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
     }).format(numero);
 }
 

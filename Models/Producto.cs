@@ -18,7 +18,7 @@ namespace CosmeticosApp.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Precio { get; set; }
+        public decimal Precio { get; set; } // Precio en CLP (pesos chilenos)
 
         [Required]
         public int Stock { get; set; }

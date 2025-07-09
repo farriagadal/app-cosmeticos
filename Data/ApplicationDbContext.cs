@@ -52,7 +52,7 @@ namespace CosmeticosApp.Data
                 .HasForeignKey(dp => dp.ProductoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configurar precisión decimal
+            // Configurar precisión decimal para precios en CLP (pesos chilenos)
             builder.Entity<Producto>()
                 .Property(p => p.Precio)
                 .HasPrecision(18, 2);
@@ -95,11 +95,11 @@ namespace CosmeticosApp.Data
 
             // Productos
             builder.Entity<Producto>().HasData(
-                new Producto { Id = 1, Nombre = "Base Líquida FIT ME", Descripcion = "Base de maquillaje líquida con cobertura natural", Precio = 45.99m, Stock = 50, CategoriaId = 1, MarcaId = 1, Codigo = "MAY001", ImagenUrl = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop" },
-                new Producto { Id = 2, Nombre = "Máscara de Pestañas Voluminous", Descripcion = "Máscara que proporciona volumen y longitud", Precio = 32.50m, Stock = 30, CategoriaId = 1, MarcaId = 2, Codigo = "LOR001", ImagenUrl = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300&h=300&fit=crop" },
-                new Producto { Id = 3, Nombre = "Crema Hidratante Facial", Descripcion = "Crema hidratante para todo tipo de piel", Precio = 28.75m, Stock = 40, CategoriaId = 2, MarcaId = 4, Codigo = "NEU001", ImagenUrl = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300&h=300&fit=crop" },
-                new Producto { Id = 4, Nombre = "Jabón Corporal Nutritivo", Descripcion = "Jabón corporal con 1/4 de crema hidratante", Precio = 15.99m, Stock = 60, CategoriaId = 3, MarcaId = 5, Codigo = "DOV001", ImagenUrl = "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=300&h=300&fit=crop" },
-                new Producto { Id = 5, Nombre = "Labial Mate ColorStay", Descripcion = "Labial de larga duración con acabado mate", Precio = 22.30m, Stock = 35, CategoriaId = 1, MarcaId = 3, Codigo = "REV001", ImagenUrl = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop&random=2" }
+                new Producto { Id = 1, Nombre = "Base Líquida FIT ME", Descripcion = "Base de maquillaje líquida con cobertura natural", Precio = 35990m, Stock = 50, CategoriaId = 1, MarcaId = 1, Codigo = "MAY001", ImagenUrl = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop" },
+                new Producto { Id = 2, Nombre = "Máscara de Pestañas Voluminous", Descripcion = "Máscara que proporciona volumen y longitud", Precio = 25990m, Stock = 30, CategoriaId = 1, MarcaId = 2, Codigo = "LOR001", ImagenUrl = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300&h=300&fit=crop" },
+                new Producto { Id = 3, Nombre = "Crema Hidratante Facial", Descripcion = "Crema hidratante para todo tipo de piel", Precio = 22990m, Stock = 40, CategoriaId = 2, MarcaId = 4, Codigo = "NEU001", ImagenUrl = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=300&h=300&fit=crop" },
+                new Producto { Id = 4, Nombre = "Jabón Corporal Nutritivo", Descripcion = "Jabón corporal con 1/4 de crema hidratante", Precio = 12990m, Stock = 60, CategoriaId = 3, MarcaId = 5, Codigo = "DOV001", ImagenUrl = "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=300&h=300&fit=crop" },
+                new Producto { Id = 5, Nombre = "Labial Mate ColorStay", Descripcion = "Labial de larga duración con acabado mate", Precio = 17990m, Stock = 35, CategoriaId = 1, MarcaId = 3, Codigo = "REV001", ImagenUrl = "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=300&fit=crop&random=2" }
             );
         }
     }
