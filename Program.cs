@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar Entity Framework
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseSqlServer(connectionString));
 
 // Configurar Identity
 builder.Services.AddDefaultIdentity<Usuario>(options => 
